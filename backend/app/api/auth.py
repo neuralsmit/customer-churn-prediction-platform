@@ -12,17 +12,17 @@ router = APIRouter()
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
     # Check if user already exists
-    existing_user = db.query(User).filter(User.username == user_in.username).first()
+    existing_user = db.query(User).filter(User.email == user_in.email).first()
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already registered"
+            detail="Email already registered"
         )
     
     # Hash password and create user
     hashed_password = get_password_hash(user_in.password)
     db_user = User(
-        username=user_in.username,
+        email=user_in.email,
         hashed_password=hashed_password,
         role=user_in.role or "analyst"
     )
@@ -33,26 +33,27 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 def login_json(user_in: UserCreate, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == user_in.username).first()
+    user = db.query(User).filter(User.email == user_in.email).first()
     if not user or not verify_password(user_in.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect username or password"
+            detail="Incorrect email or password"
         )
     
-    access_token = create_access_token(subject=user.username)
+    access_token = create_access_token(subject=user.email)
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/login-oauth2", response_model=Token)
 def login_oauth2(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == form_data.username).first()
+    # OAuth2 username parameter will hold the email in this request
+    user = db.query(User).filter(User.email == form_data.username).first()
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect username or password"
+            detail="Incorrect email or password"
         )
     
-    access_token = create_access_token(subject=user.username)
+    access_token = create_access_token(subject=user.email)
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/me", response_model=UserResponse)

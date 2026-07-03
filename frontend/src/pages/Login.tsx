@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ShieldAlert, Lock, User as UserIcon } from 'lucide-react';
+import { ShieldAlert, Lock, Mail as MailIcon } from 'lucide-react';
 
 export const Login: React.FC = () => {
   const { login, register } = useAuth();
   const navigate = useNavigate();
   
   const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ export const Login: React.FC = () => {
     e.preventDefault();
     setError('');
     
-    if (!username || !password) {
+    if (!email || !password) {
       setError('Please fill in all fields.');
       return;
     }
@@ -25,9 +25,9 @@ export const Login: React.FC = () => {
     setLoading(true);
     try {
       if (isLogin) {
-        await login(username, password);
+        await login(email, password);
       } else {
-        await register(username, password);
+        await register(email, password);
       }
       navigate('/');
     } catch (err: any) {
@@ -71,17 +71,17 @@ export const Login: React.FC = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} style={formStyle}>
           <div className="form-group">
-            <label className="form-label" htmlFor="username">Username</label>
+            <label className="form-label" htmlFor="email">Email</label>
             <div style={inputWrapperStyle}>
-              <UserIcon size={16} color="var(--text-secondary)" style={inputIconStyle} />
+              <MailIcon size={16} color="var(--text-secondary)" style={inputIconStyle} />
               <input
-                id="username"
-                type="text"
+                id="email"
+                type="email"
                 className="form-input"
                 style={inputStyle}
-                placeholder="Enter username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
               />
             </div>
@@ -118,7 +118,7 @@ export const Login: React.FC = () => {
         {isLogin && (
           <div style={noteStyle}>
             <p>Demo Analyst Login:</p>
-            <code>Username: <b>analyst</b> / Password: <b>password123</b></code>
+            <code>Email: <b>analyst@example.com</b> / Password: <b>password123</b></code>
           </div>
         )}
       </div>

@@ -4,7 +4,7 @@ from datetime import datetime
 
 # --- User Schemas ---
 class UserBase(BaseModel):
-    username: str
+    email: EmailStr
 
 class UserCreate(UserBase):
     password: str
@@ -24,7 +24,7 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    username: Optional[str] = None
+    email: Optional[EmailStr] = None
 
 # --- Customer Schemas ---
 class CustomerBase(BaseModel):

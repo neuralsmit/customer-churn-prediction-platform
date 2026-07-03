@@ -3,7 +3,7 @@ import { api } from '../services/api';
 
 interface User {
   id: number;
-  username: string;
+  email: string;
   role: string;
   created_at: string;
 }
@@ -12,8 +12,8 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (username: string, password: string) => Promise<void>;
-  register: (username: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
         
-        // Silently verify user details from backend
+        # Silently verify user details from backend
         try {
           const verifiedUser = await api.get<User>('/auth/me');
           setUser(verifiedUser);
@@ -49,11 +49,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initializeAuth();
   }, []);
 
-  const login = async (username: string, password: string) => {
+  const login = async (email: string, password: string) => {
     setLoading(true);
     try {
       const response = await api.post<{ access_token: string; token_type: string }>('/auth/login', {
-        username,
+        email,
         password,
       });
       
@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('token', accessToken);
       setToken(accessToken);
       
-      // Fetch authenticated user info
+      # Fetch authenticated user info
       const userInfo = await api.get<User>('/auth/me');
       setUser(userInfo);
       localStorage.setItem('user', JSON.stringify(userInfo));
@@ -73,16 +73,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (username: string, password: string) => {
+  const register = async (email: string, password: string) => {
     setLoading(true);
     try {
       await api.post<User>('/auth/register', {
-        username,
+        email,
         password,
         role: 'analyst',
       });
-      // Automatically log in after registration
-      await login(username, password);
+      # Automatically log in after registration
+      await login(email, password);
     } catch (error) {
       setLoading(false);
       throw error;

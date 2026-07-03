@@ -21,7 +21,7 @@ def seed_database(db: Session):
         print("Seeding database: creating default analyst user...")
         hashed_password = get_password_hash("password123")
         default_user = User(
-            username="analyst",
+            email="analyst@example.com",
             hashed_password=hashed_password,
             role="analyst"
         )
@@ -126,6 +126,19 @@ def startup_event():
     if not db_connected:
         print("Database connection failed. Exiting.")
         os._exit(1)
+        
+    # Auto-migration: check if old username column exists, and drop tables to rebuild if needed
+    try:
+        from sqlalchemy import inspect
+        inspector = inspect(engine)
+        if "users" in inspector.get_table_names():
+            columns = [c["name"] for c in inspector.get_columns("users")]
+            if "username" in columns and "email" not in columns:
+                print("Old 'users' table structure detected. Dropping all tables for schema migration...")
+                Base.metadata.drop_all(bind=engine)
+                print("Tables dropped successfully.")
+    except Exception as e:
+        print(f"Error checking database tables: {e}. Proceeding...")
         
     # Create tables
     print("Creating database tables...")

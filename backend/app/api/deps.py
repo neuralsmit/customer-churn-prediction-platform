@@ -30,19 +30,19 @@ def get_current_user(
         payload = jwt.decode(
             actual_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
-        username: str = payload.get("sub")
-        if username is None:
+        email: str = payload.get("sub")
+        if email is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Could not validate credentials",
             )
-        token_data = TokenData(username=username)
+        token_data = TokenData(email=email)
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
         )
-    user = db.query(User).filter(User.username == token_data.username).first()
+    user = db.query(User).filter(User.email == token_data.email).first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
