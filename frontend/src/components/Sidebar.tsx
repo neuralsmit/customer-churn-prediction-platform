@@ -52,10 +52,10 @@ export const Sidebar: React.FC = () => {
         <div className="user-profile-panel" style={profilePanelStyle}>
           <div style={profileInfoStyle}>
             <div style={avatarStyle}>
-              {user.username.substring(0, 2).toUpperCase()}
+              {user.email.substring(0, 2).toUpperCase()}
             </div>
             <div style={profileDetailsStyle}>
-              <div style={usernameStyle}>{user.username}</div>
+              <div style={usernameStyle}>{user.email}</div>
               <div style={roleStyle}>{user.role.toUpperCase()}</div>
             </div>
           </div>
