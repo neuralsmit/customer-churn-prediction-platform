@@ -38,7 +38,17 @@ class ApiClient {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || `API request failed with status ${response.status}`);
+      let errorMessage = `API request failed with status ${response.status}`;
+      if (errorData.detail) {
+        if (typeof errorData.detail === 'string') {
+          errorMessage = errorData.detail;
+        } else if (Array.isArray(errorData.detail)) {
+          errorMessage = errorData.detail.map((err: any) => err.msg || JSON.stringify(err)).join(', ');
+        } else if (typeof errorData.detail === 'object') {
+          errorMessage = errorData.detail.message || JSON.stringify(errorData.detail);
+        }
+      }
+      throw new Error(errorMessage);
     }
 
     // Return null on 204 No Content

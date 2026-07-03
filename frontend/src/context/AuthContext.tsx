@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
         
-        # Silently verify user details from backend
+        // Silently verify user details from backend
         try {
           const verifiedUser = await api.get<User>('/auth/me');
           setUser(verifiedUser);
@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('token', accessToken);
       setToken(accessToken);
       
-      # Fetch authenticated user info
+      // Fetch authenticated user info
       const userInfo = await api.get<User>('/auth/me');
       setUser(userInfo);
       localStorage.setItem('user', JSON.stringify(userInfo));
@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         password,
         role: 'analyst',
       });
-      # Automatically log in after registration
+      // Automatically log in after registration
       await login(email, password);
     } catch (error) {
       setLoading(false);
