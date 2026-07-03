@@ -113,14 +113,6 @@ export const Login: React.FC = () => {
             {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
           </button>
         </form>
-
-        {/* Demo Credential Note */}
-        {isLogin && (
-          <div style={noteStyle}>
-            <p>Demo Analyst Login:</p>
-            <code>Email: <b>analyst@example.com</b> / Password: <b>password123</b></code>
-          </div>
-        )}
       </div>
     </div>
   );
