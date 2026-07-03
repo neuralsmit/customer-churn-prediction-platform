@@ -27,9 +27,29 @@ const PrivateRoute: React.FC = () => {
 
 // Layout wrapping sidebar navigation and active page view
 const Layout: React.FC = () => {
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
   return (
     <div className="app-container">
-      <Sidebar />
+      {/* Mobile Top Header */}
+      <header className="mobile-header glass">
+        <button className="menu-toggle-btn" onClick={() => setSidebarOpen(true)}>
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <span className="mobile-logo-text">ChurnShield</span>
+      </header>
+
+      {/* Backdrop overlay for mobile drawer */}
+      {sidebarOpen && (
+        <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      
       <main className="main-content">
         <Outlet />
       </main>

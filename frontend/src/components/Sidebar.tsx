@@ -7,10 +7,16 @@ import {
   UserPlus, 
   UploadCloud, 
   LogOut, 
-  ShieldAlert 
+  ShieldAlert,
+  X
 } from 'lucide-react';
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
 
@@ -22,11 +28,16 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="sidebar glass" style={sidebarStyle}>
+    <aside className={`sidebar glass ${isOpen ? 'open' : ''}`} style={sidebarStyle}>
       {/* Brand logo banner */}
       <div className="brand-logo" style={logoContainerStyle}>
-        <ShieldAlert size={28} color="#8b5cf6" />
-        <span style={logoTextStyle}>ChurnShield</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <ShieldAlert size={28} color="#8b5cf6" />
+          <span style={logoTextStyle}>ChurnShield</span>
+        </div>
+        <button onClick={onClose} className="sidebar-close-btn" style={closeBtnStyle}>
+          <X size={20} />
+        </button>
       </div>
 
       {/* Nav Menu */}
@@ -70,25 +81,26 @@ export const Sidebar: React.FC = () => {
 };
 
 // CSS styles within component for robust encapsulation
-const sidebarStyle: React.CSSProperties = {
-  position: 'fixed',
-  top: 0,
-  bottom: 0,
-  left: 0,
-  width: 'var(--sidebar-width)',
-  display: 'flex',
-  flexDirection: 'column',
-  padding: '24px 16px',
-  borderRight: '1px solid var(--border)',
-  zIndex: 100,
-};
+const sidebarStyle: React.CSSProperties = {};
 
 const logoContainerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'space-between',
   gap: '12px',
   marginBottom: '40px',
   paddingLeft: '8px',
+  width: '100%',
+};
+
+const closeBtnStyle: React.CSSProperties = {
+  background: 'transparent',
+  border: 'none',
+  color: 'var(--text-secondary)',
+  cursor: 'pointer',
+  display: 'none',
+  alignItems: 'center',
+  justifyContent: 'center',
 };
 
 const logoTextStyle: React.CSSProperties = {
