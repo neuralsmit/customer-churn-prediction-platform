@@ -1,4 +1,14 @@
-const VITE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+let VITE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+
+// If VITE_URL is a Render internal hostname (e.g. "churn-backend-ml4y"), convert it to the public URL
+if (VITE_URL && !VITE_URL.startsWith('http://') && !VITE_URL.startsWith('https://')) {
+  if (VITE_URL.includes('.')) {
+    VITE_URL = `https://${VITE_URL}`;
+  } else {
+    VITE_URL = `https://${VITE_URL}.onrender.com`;
+  }
+}
+
 const API_BASE_URL = VITE_URL.includes('/api')
   ? VITE_URL
   : `${VITE_URL.replace(/\/$/, '')}/api`;
