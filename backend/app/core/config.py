@@ -18,6 +18,14 @@ class Settings(BaseSettings):
     
     @property
     def DATABASE_URL(self) -> str:
+        # Check if DATABASE_URL env var is provided directly (e.g. Render / Railway production db url)
+        env_db_url = os.getenv("DATABASE_URL")
+        if env_db_url:
+            # SQLAlchemy requires postgresql:// instead of postgres://
+            if env_db_url.startswith("postgres://"):
+                env_db_url = env_db_url.replace("postgres://", "postgresql://", 1)
+            return env_db_url
+            
         if self.RUNNING_IN_DOCKER:
             return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:5432/{self.POSTGRES_DB}"
         else:

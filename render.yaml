@@ -1,0 +1,40 @@
+services:
+  # ChurnShield FastAPI Backend Web Service
+  - type: web
+    name: churn-backend
+    env: docker
+    dockerContext: backend
+    dockerfilePath: Dockerfile
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: churn-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: RUNNING_IN_DOCKER
+        value: "true"
+      - key: PORT
+        value: "8000"
+
+  # ChurnShield React Frontend Static Site
+  - type: web
+    name: churn-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: churn-backend
+          property: host
+
+databases:
+  # ChurnShield Managed PostgreSQL Database
+  - name: churn-db
+    plan: free
+    ipAllowList: [] # Access restricted to Render services only for security
